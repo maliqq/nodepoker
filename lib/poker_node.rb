@@ -14,6 +14,7 @@ module PokerNode
     :one_pair,
     :high_card
   ]
+  REGEX = /(\d+|[A|K|Q|J]{1})([♠ ♥ ♦ ♣]{1})/
 
   class Suit
     class << self
@@ -25,14 +26,14 @@ module PokerNode
 
   class Hand
     def initialize(hand)
-      @flush = Hand.flush?(Hash[hand].values)
-      @straight = Hand.straight?(Hash[hand].keys)
-      @kinds = hand.collect { |card| card[0] }
-      @counts = @kinds.collect { |kind| @kinds.count(kind) }
-      @four = @counts.any? { |c| c == 4 }
-      @three = @counts.any? { |c| c ==3 }
-      @pair = @counts.any? { |c| c == 2 }
-      @two_pairs = @counts.select { |c| c == 2 }.size == 2
+      @flush      = Hand.flush?(Hash[hand].values)
+      @straight   = Hand.straight?(Hash[hand].keys)
+      @kinds      = hand.collect { |card| card[0] }
+      @counts     = @kinds.collect { |kind| @kinds.count(kind) }
+      @four       = @counts.any? { |c| c == 4 }
+      @three      = @counts.any? { |c| c ==3 }
+      @pair       = @counts.any? { |c| c == 2 }
+      @two_pairs  = @counts.select { |c| c == 2 }.size == 2
     end
 
     def four?
@@ -72,17 +73,24 @@ module PokerNode
       end
 
       def detect(s)
-        hand = new(s.scan(/(\d+|[A|K|Q|J]{1})([♠ ♥ ♦ ♣]{1})/))
-        return :straight_flush if hand.straight? && hand.flush?
-        return :four_of_kind if hand.four?
-        return :full_house if hand.pair? && hand.three?
-        return :flush if hand.flush?
-        return :straight if hand.straight?
-        return :tree_of_kind if hand.three?
-        return :two_pair if hand.two_pairs?
-        return :one_pair if hand.pair?
+        hand = new(s.scan(REGEX))
+
+        return :straight_flush  if hand.straight? && hand.flush?
+        return :four_of_kind    if hand.four?
+        return :full_house      if hand.pair? && hand.three?
+        return :flush           if hand.flush?
+        return :straight        if hand.straight?
+        return :tree_of_kind    if hand.three?
+        return :two_pair        if hand.two_pairs?
+        return :one_pair        if hand.pair?
         return :hight_card
       end
     end
+  end
+
+  class Table
+    attr_reader :flop
+    attr_reader :turn
+    attr_reader :river
   end
 end
