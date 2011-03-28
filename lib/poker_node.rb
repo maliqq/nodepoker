@@ -63,6 +63,18 @@ module PokerNode
       @straight
     end
 
+    def detect
+      return :straight_flush  if straight? && flush?
+      return :four_of_kind    if four?
+      return :full_house      if pair? && three?
+      return :flush           if flush?
+      return :straight        if straight?
+      return :tree_of_kind    if three?
+      return :two_pair        if two_pairs?
+      return :one_pair        if pair?
+      return :hight_card
+    end
+
     class << self
       def flush?(suits)
         suits.uniq.size == 1
@@ -76,16 +88,7 @@ module PokerNode
       end
 
       def detect(s)
-        hand = new(s.scan(REGEX))
-        return :straight_flush  if hand.straight? && hand.flush?
-        return :four_of_kind    if hand.four?
-        return :full_house      if hand.pair? && hand.three?
-        return :flush           if hand.flush?
-        return :straight        if hand.straight?
-        return :tree_of_kind    if hand.three?
-        return :two_pair        if hand.two_pairs?
-        return :one_pair        if hand.pair?
-        return :hight_card
+        new(s.scan(REGEX)).detect
       end
     end
   end
