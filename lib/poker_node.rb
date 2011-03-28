@@ -2,8 +2,8 @@ $KCODE = 'u'
 
 module PokerNode
   SUIT = %w(♠ ♥ ♦ ♣)
-  KIND = %w(2 3 4 5 6 7 8 9 10 J Q K A)
-  HAND = [
+  KIND = %w(A K Q J 10 9 8 7 6 5 4 3 2)
+  HAND = [ # sorted by rank
     :straight_flush,
     :four_of_kind,
     :full_house,
@@ -34,6 +34,9 @@ module PokerNode
       @three      = @counts.any? { |c| c ==3 }
       @pair       = @counts.any? { |c| c == 2 }
       @two_pairs  = @counts.select { |c| c == 2 }.size == 2
+    end
+
+    def <=>(other_hand) # TODO compare with other hand
     end
 
     def four?
@@ -74,7 +77,6 @@ module PokerNode
 
       def detect(s)
         hand = new(s.scan(REGEX))
-
         return :straight_flush  if hand.straight? && hand.flush?
         return :four_of_kind    if hand.four?
         return :full_house      if hand.pair? && hand.three?
@@ -90,7 +92,17 @@ module PokerNode
 
   class Table
     attr_reader :flop
-    attr_reader :turn
-    attr_reader :river
+
+    attr_reader :turn_card
+    def turn
+      "#{flop}#{turn_card}"
+    end
+
+    attr_reader :river_card
+    def river
+      "#{turn}#{river_card}"
+    end
+
+    attr_reader :hands
   end
 end
