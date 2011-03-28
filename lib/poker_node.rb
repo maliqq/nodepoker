@@ -14,7 +14,7 @@ module PokerNode
     :one_pair,
     :high_card
   ]
-  REGEX = /(\d+|[A|K|Q|J]{1})([♠ ♥ ♦ ♣]{1})/
+  REGEX = /(\d+|[A|K|Q|J]{1})([♠♥♦♣]{1})/
 
   class Suit
     class << self
