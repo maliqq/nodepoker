@@ -16,22 +16,26 @@ module PokerNode
   ]
   REGEX = /(\d+|[A|K|Q|J]{1})([♠♥♦♣]{1})/
 
-  class Suit
-    class << self
-      def random
-        SUIT[rand(SUIT.size)]
-      end
-    end
-  end
-
   class Hand
     def initialize(hand)
-      @flush      = Hand.flush?(Hash[hand].values)
-      @straight   = Hand.straight?(Hash[hand].keys)
+      case hand
+      when Hash
+        hand = hand.to_a
+      when String
+        hand = hand.scan(REGEX)
+      end
+      @hand = Hash[hand]
+
       @kinds      = hand.collect { |card| card[0] }
-      @counts     = @kinds.collect { |kind| @kinds.count(kind) }
+      @suits      = hand.collect { |card| card[1] }
+      
+      @flush      = Hand.flush?(@suits)
+      @straight   = Hand.straight?(@kinds)
+
+      @counts     = @kinds.uniq.collect { |kind| @kinds.count(kind) }
+
       @four       = @counts.any? { |c| c == 4 }
-      @three      = @counts.any? { |c| c ==3 }
+      @three      = @counts.any? { |c| c == 3 }
       @pair       = @counts.any? { |c| c == 2 }
       @two_pairs  = @counts.select { |c| c == 2 }.size == 2
     end
@@ -72,7 +76,7 @@ module PokerNode
       return :tree_of_kind    if three?
       return :two_pair        if two_pairs?
       return :one_pair        if pair?
-      return :hight_card
+      return :high_card
     end
 
     class << self
@@ -88,6 +92,7 @@ module PokerNode
       end
 
       def detect(s)
+        puts "detecting #{s}"
         new(s.scan(REGEX)).detect
       end
     end
