@@ -40,7 +40,8 @@ module PokerNode
       @two_pairs  = @counts.select { |c| c == 2 }.size == 2
     end
 
-    def <=>(other_hand) # TODO compare with other hand
+    def <=>(other_hand)
+      rank == other_hand.rank ? weight <=> other_hand.weight : rank <=> other_hand.rank
     end
 
     def four?
@@ -67,7 +68,7 @@ module PokerNode
       @straight
     end
 
-    def detect
+    def to_sym
       return :straight_flush  if straight? && flush?
       return :four_of_kind    if four?
       return :full_house      if pair? && three?
@@ -77,6 +78,13 @@ module PokerNode
       return :two_pair        if two_pairs?
       return :one_pair        if pair?
       return :high_card
+    end
+    
+    def rank
+      @rank ||= HAND.index(to_sym)
+    end
+
+    def weight # TODO
     end
 
     class << self
@@ -89,11 +97,6 @@ module PokerNode
           indexes = kinds.collect { |kind| KIND.index(kind) }
           indexes.max - indexes.min == 4
         end
-      end
-
-      def detect(s)
-        puts "detecting #{s}"
-        new(s.scan(REGEX)).detect
       end
     end
   end
