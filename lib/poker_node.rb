@@ -1,8 +1,9 @@
+require 'set'
 $KCODE = 'u'
 
 module PokerNode
   SUIT = %w(♠ ♥ ♦ ♣).freeze
-  KIND = %w(A K Q J 10 9 8 7 6 5 4 3 2).freeze
+  KIND = %w(2 3 4 5 6 7 8 9 10 J Q K A).freeze
   HAND = [ # sorted by rank
     :high_card,
     :one_pair,
@@ -100,7 +101,9 @@ module PokerNode
       def straight?(kinds)
         kinds.uniq.size == 5 && begin
           indexes = kinds.collect { |kind| KIND.index(kind) }
-          indexes.max - indexes.min == 4
+          indexes.max - indexes.min == 4 || begin
+            Set.new(kinds) == Set.new(%w(A 2 3 4 5)) # wheel
+          end
         end
       end
     end
