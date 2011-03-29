@@ -16,6 +16,12 @@ def random_kind(size = 1, limit = 1)
   end; s
 end
 
+def kinds_with_each_suit(kinds, &block)
+  PokerNode::SUIT.each { |suit|
+    block.call(kinds.collect{ |kind| "#{kind}#{suit}" }.join)
+  }
+end
+
 def kinds_with_random_suits(kinds)
   s = ''
   random_suit(5).each_with_index { |suit, i|
@@ -31,13 +37,15 @@ describe PokerNode::Hand do
 
   example 'flush?' do
     PokerNode::SUIT.each { |suit|
-      PokerNode::Hand.flush?([suit] * 5).should be_true
+      suits = [suit] * 5
+      PokerNode::Hand.flush?(suits).should be_true
     }
   end
 
   example 'straight?' do
     0.upto(8) { |i|
-      PokerNode::Hand.straight?(PokerNode::KIND.slice(i, 5)).should be_true
+      kinds = PokerNode::KIND.slice(i, 5)
+      PokerNode::Hand.straight?(kinds).should be_true
     }
   end
 
@@ -45,16 +53,16 @@ describe PokerNode::Hand do
 
     example 'straight flush' do
       0.upto(8) { |i|
-        PokerNode::SUIT.each { |suit|
-          s = PokerNode::KIND.slice(i, 5).collect { |kind| "#{kind}#{suit}" }.join
-          detect_hand(s).should == :straight_flush
+        kinds_with_each_suit(PokerNode::KIND.slice(i, 5)) { |h|
+          detect_hand(h).should == :straight_flush
         }
       }
     end
 
     example 'four of a kind' do
       PokerNode::KIND.each { |a|
-        detect_hand(kinds_with_random_suits([a, a, a, a])).should == :four_of_kind
+        h = kinds_with_random_suits([a, a, a, a])
+        detect_hand(h).should == :four_of_kind
       }
     end
 
@@ -63,24 +71,22 @@ describe PokerNode::Hand do
         r = random_kind(2)
         a = r[0]
         b = r[1]
-        detect_hand(kinds_with_random_suits([a, a, b, b, b])).
-          should == :full_house
+        h = kinds_with_random_suits([a, a, b, b, b])
+        detect_hand(h).should == :full_house
       }
     end
 
     example 'flush' do
-      PokerNode::SUIT.each { |suit|
-        s = random_kind(5).collect { |kind| "#{kind}#{suit}" }.join
-        detect_hand(s).should == :flush
+      kinds_with_each_suit(random_kind(5)) { |h|
+        detect_hand(h).should == :flush
       }
     end
 
     example 'straight' do
       0.upto(8) { |i|
-        PokerNode::SUIT.each { |suit|
-          kinds = PokerNode::KIND.slice(i, 5)
-          detect_hand(kinds_with_random_suits(kinds)).should == :straight
-        }
+        kinds = PokerNode::KIND.slice(i, 5)
+        h = kinds_with_random_suits(kinds)
+        detect_hand(h).should == :straight
       }
     end
 
@@ -107,14 +113,17 @@ describe PokerNode::Hand do
       13.times {
         r = random_kind(5)
         a = r.shift
-        detect_hand(kinds_with_random_suits([a, a, *r])).should == :one_pair
+        h = kinds_with_random_suits([a, a, *r])
+        detect_hand(h).should == :one_pair
       }
     end
 
     example 'high card' do
       13.times {
         r = random_kind(5)
-        detect_hand(kinds_with_random_suits(r)).should == :high_card
+        next if PokerNode::Hand.straight?(r)
+        h = kinds_with_random_suits(r)
+        detect_hand(h).should == :high_card
       }
     end
   end
