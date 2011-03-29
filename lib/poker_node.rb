@@ -122,7 +122,7 @@ module PokerNode
     end
   end
 
-  class Table
+  class Deal
     attr_reader :flop
 
     attr_reader :turn_card
