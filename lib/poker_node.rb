@@ -1,8 +1,8 @@
 $KCODE = 'u'
 
 module PokerNode
-  SUIT = %w(♠ ♥ ♦ ♣)
-  KIND = %w(A K Q J 10 9 8 7 6 5 4 3 2)
+  SUIT = %w(♠ ♥ ♦ ♣).freeze
+  KIND = %w(A K Q J 10 9 8 7 6 5 4 3 2).freeze
   HAND = [ # sorted by rank
     :high_card,
     :one_pair,
@@ -13,7 +13,12 @@ module PokerNode
     :full_house,
     :four_of_kind,
     :straight_flush
-  ]
+  ].freeze
+
+  CARDS = SUIT.collect { |suit|
+    KIND.collect { |kind| "#{kind}#{suit}" }
+  }.flatten.freeze
+
   REGEX = /(\d+|[A|K|Q|J]{1})([♠♥♦♣]{1})/
 
   class Hand
