@@ -4,15 +4,15 @@ module PokerNode
   SUIT = %w(♠ ♥ ♦ ♣)
   KIND = %w(A K Q J 10 9 8 7 6 5 4 3 2)
   HAND = [ # sorted by rank
-    :straight_flush,
-    :four_of_kind,
-    :full_house,
-    :flush,
-    :straight,
-    :three_of_kind,
-    :two_pair,
+    :high_card,
     :one_pair,
-    :high_card
+    :two_pair,
+    :three_of_kind,
+    :straight,
+    :flush,
+    :full_house,
+    :four_of_kind,
+    :straight_flush
   ]
   REGEX = /(\d+|[A|K|Q|J]{1})([♠♥♦♣]{1})/
 

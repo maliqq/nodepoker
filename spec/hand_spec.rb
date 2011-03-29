@@ -24,7 +24,7 @@ def kinds_with_random_suits(kinds)
 end
 
 def detect_hand(s)
-  PokerNode::Hand.new(s).detect
+  PokerNode::Hand.new(s).to_sym
 end
 
 describe PokerNode::Hand do
@@ -117,5 +117,8 @@ describe PokerNode::Hand do
         detect_hand(kinds_with_random_suits(r)).should == :high_card
       }
     end
+  end
+
+  describe 'comparing' do
   end
 end
