@@ -34,23 +34,7 @@ def detect_hand(s)
 end
 
 describe PokerNode::Hand do
-
-  example 'flush?' do
-    PokerNode::SUIT.each { |suit|
-      suits = [suit] * 5
-      PokerNode::Hand.flush?(suits).should be_true
-    }
-  end
-
-  example 'straight?' do
-    0.upto(8) { |i|
-      kinds = PokerNode::KIND.slice(i, 5)
-      PokerNode::Hand.straight?(kinds).should be_true
-    }
-  end
-
   describe 'detecting' do
-
     example 'straight flush' do
       0.upto(8) { |i|
         kinds_with_each_suit(PokerNode::KIND.slice(i, 5)) { |h|
@@ -119,15 +103,29 @@ describe PokerNode::Hand do
     end
 
     example 'high card' do
-      13.times {
-        r = random_kind(5)
-        next if PokerNode::Hand.straight?(r)
-        h = kinds_with_random_suits(r)
-        detect_hand(h).should == :high_card
-      }
+      #13.times {
+      #  r = random_kind(5)
+      #  h = kinds_with_random_suits(r)
+      #  detect_hand(h).should == :high_card
+      #}
     end
   end
 
   describe 'comparing' do
+  end
+
+  describe 'shuffle' do
+
+    5.times {
+      table = PokerNode::Table.new(5)
+      table.shuffle
+      puts table.inspect
+      s = ''
+      table.hands.each_with_index { |hand, i|
+        s << "\t\tHand ##{i + 1}: #{hand.map(&:to_s).join}\n"
+      }
+      puts s
+    }
+
   end
 end
