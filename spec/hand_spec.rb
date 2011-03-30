@@ -30,7 +30,7 @@ def kinds_with_random_suits(kinds)
 end
 
 def detect_hand(s)
-  PokerNode::Hand.new(s).to_sym
+  PokerNode::Hand.new(s).rank
 end
 
 describe PokerNode::Hand do
@@ -79,7 +79,7 @@ describe PokerNode::Hand do
         r = random_kind(3)
         a = r.shift
         h = kinds_with_random_suits([a, a, a, *r])
-        detect_hand(h).should == :tree_of_kind
+        detect_hand(h).should == :three_of_kind
       }
     end
 
@@ -114,17 +114,11 @@ describe PokerNode::Hand do
   describe 'comparing' do
   end
 
-  describe 'shuffle' do
-
+  example 'shuffle' do
     5.times {
       table = PokerNode::Deal.new(5)
       table.shuffle
-      puts table.inspect
-      s = ''
-      table.hands.each_with_index { |hand, i|
-        s << "\t\tHand ##{i + 1}: #{hand.map(&:to_s).join}\n"
-      }
-      puts s
+      table.hand_cards.size.should == 5
     }
 
   end

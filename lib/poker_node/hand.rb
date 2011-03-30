@@ -6,8 +6,9 @@ module PokerNode
     attr_reader :high_card
     attr_reader :kickers
 
-    def initialize(cards, closed_cards = [])
-      @cards = cards + closed_cards
+    def initialize(cards)
+      @cards = cards
+      @cards = Card.from_string(cards) if cards.is_a?(String)
       @cards_by_suit = Hash.new { |h, k| h[k] = [] }
       @cards_by_kind = Hash.new { |h, k| h[k] = [] }
       @cards.each { |card|
@@ -64,12 +65,14 @@ module PokerNode
     alias :pair? one_pair?
 
     def flush?
-      @cards_by_suit.values.select { |cards|
+      f = @cards_by_suit.values.select { |cards|
         cards.size == 5
-      }.each { |cards|
-        @high_card = cards.max
-        @kickers = @cards - cards
-      }.size > 0
+      }
+      if f.first
+        @high_card = f.first.max
+        @kickers = @cards - f.first
+      end
+      f.size > 0
     end
 
     def straight?
@@ -84,6 +87,7 @@ module PokerNode
         }
           @high_card = @cards_by_kind[KIND[i]].first
           @kickers = @cards - straight_kinds.collect { |kind| @cards_by_kind[kind].first }
+          return true
         end
       }
       return false
