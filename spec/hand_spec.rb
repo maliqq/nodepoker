@@ -117,7 +117,7 @@ describe PokerNode::Hand do
   describe 'shuffle' do
 
     5.times {
-      table = PokerNode::Table.new(5)
+      table = PokerNode::Deal.new(5)
       table.shuffle
       puts table.inspect
       s = ''
