@@ -115,11 +115,15 @@ describe PokerNode::Hand do
   end
 
   example 'shuffle' do
-    5.times {
-      table = PokerNode::Deal.new(5)
-      table.shuffle
-      table.hand_cards.size.should == 5
+    [:four_of_kind?, :straight_flush?].each { |m|
+      retries = 0
+      while true
+        retries += 1
+        table = PokerNode::Deal.new(5)
+        table.shuffle
+        break if table.winner_hand.send(m)
+      end
+      retries.should > 0
     }
-
   end
 end

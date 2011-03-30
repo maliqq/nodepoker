@@ -16,7 +16,7 @@ module PokerNode
         @cards_by_kind[card.kind] << card
       }
       @high_card = Card.new(nil, nil)
-      @kickers = []
+      @kickers = on_hand
     end
 
     def four_of_kind?
@@ -47,7 +47,7 @@ module PokerNode
       p = sorted_pairs
       if p.first && p.second
         @high_card = p.first.max
-        @kickers = @cards - sorted_pairs
+        @kickers = @cards - sorted_pairs.flatten
         @kickers += p.third if p.third
       end
       p.size > 1
@@ -156,8 +156,8 @@ module PokerNode
       when :one_pair
         "One pair of #{pairs.first[0].kind}"
       when :high_card
-        "High card of #{on_hand.max.kind}"
-      end
+        "High card"
+      end + ", kicker #{@kickers.max}"
     end
 
     def on_hand

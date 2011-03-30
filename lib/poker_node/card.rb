@@ -24,7 +24,7 @@ module PokerNode
     end
 
     def <=>(other)
-      KIND.index(self.kind) || -1 <=> KIND.index(other.kind) || -1
+      (KIND.index(self.kind) || -1) <=> (KIND.index(other.kind) || -1)
     end
   end
 end
