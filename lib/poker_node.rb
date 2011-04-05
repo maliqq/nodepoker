@@ -5,7 +5,10 @@ $KCODE = 'u'
 module PokerNode
   autoload :Card, 'poker_node/card'
   autoload :Hand, 'poker_node/hand'
+  autoload :Hole, 'poker_node/hole'
   autoload :Deal, 'poker_node/deal'
+  autoload :Rank, 'poker_node/rank'
+  autoload :Test, 'poker_node/test'
 
   SUIT = %w(♠ ♥ ♦ ♣).freeze
 

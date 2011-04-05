@@ -30,7 +30,7 @@ def kinds_with_random_suits(kinds)
 end
 
 def detect_hand(s)
-  PokerNode::Hand.new(s).rank
+  PokerNode::Hand.new(s).rank.to_sym
 end
 
 describe PokerNode::Hand do
@@ -79,6 +79,7 @@ describe PokerNode::Hand do
         r = random_kind(3)
         a = r.shift
         h = kinds_with_random_suits([a, a, a, *r])
+        puts h unless detect_hand(h) == :three_of_kind
         detect_hand(h).should == :three_of_kind
       }
     end
@@ -114,7 +115,7 @@ describe PokerNode::Hand do
   describe 'comparing' do
   end
 
-  example 'shuffle' do
+  xit 'shuffle' do
     [:four_of_kind?, :straight_flush?].each { |m|
       retries = 0
       while true
