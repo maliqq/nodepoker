@@ -3,7 +3,7 @@ module PokerNode
     include Comparable
 
     attr_reader :cards
-    attr_reader :high_card
+    attr_reader :high_cards
     attr_reader :kickers
 
     def initialize(cards)
@@ -16,17 +16,14 @@ module PokerNode
         @cards_by_kind[card.kind] << card
       }
       @high_card = Card.new(nil, nil)
-      @kickers = on_hand
+      @kickers = hole
     end
 
     def four_of_kind?
       quads = @cards_by_kind.values.select { |cards|
         cards.size == 4
       }
-      if quads.first
-        @high_card = quads[0].first
-        @kickers = @cards - quads
-      end
+      @high_cards = quads[0] if quads.first
       quads.size > 0
     end
 
@@ -34,10 +31,7 @@ module PokerNode
       set = @cards_by_kind.values.select { |cards|
         cards.size == 3
       }
-      if set.first
-        @high_card = set[0].first
-        @kickers = @cards - set
-      end
+      @high_cards = set[0] if set.first
       set.size > 0
     end
 
@@ -45,20 +39,13 @@ module PokerNode
 
     def two_pair?
       p = sorted_pairs
-      if p.first && p.second
-        @high_card = p.first.max
-        @kickers = @cards - sorted_pairs.flatten
-        @kickers += p.third if p.third
-      end
+      @high_cards = p.slice(0, 2) if p.size > 1
       p.size > 1
     end
 
     def one_pair?
       p = sorted_pairs
-      if p.first
-        @high_card = p.first.max
-        @kickers = @cards - p.first
-      end
+      @high_cards = p.first if p.size > 0
       p.size > 0
     end
 
@@ -68,10 +55,7 @@ module PokerNode
       f = @cards_by_suit.values.select { |cards|
         cards.size == 5
       }
-      if f.first
-        @high_card = f.first.max
-        @kickers = @cards - f.first
-      end
+      @high_cards = f.first if f.first
       f.size > 0
     end
 
@@ -82,11 +66,8 @@ module PokerNode
         else
           KIND.slice(i - 4, 5)
         end
-        if straight_kinds.all? { |kind|
-          @cards_by_kind[kind].size > 0
-        }
-          @high_card = @cards_by_kind[KIND[i]].first
-          @kickers = @cards - straight_kinds.collect { |kind| @cards_by_kind[kind].first }
+        if straight_kinds.all? { |kind| @cards_by_kind[kind].size > 0 }
+          @high_cards = @cards_by_kind[KIND[i]]
           return true
         end
       }
@@ -94,7 +75,7 @@ module PokerNode
     end
 
     def straight_flush?
-      straight? && @cards_by_suit[@high_card.suit].size == 5
+      straight? && @cards_by_suit[@high_cards.first.suit].size == 5
     end
 
     def full_house?
@@ -160,22 +141,32 @@ module PokerNode
       end + ", kicker #{@kickers.max}"
     end
 
-    def on_hand
+    def hole
       @cards.slice(-2, 2)
     end
 
-    def kickers_sum
-      @kickers.inject(0) { |sum, card|
-        sum + KIND.index(card.kind)
-      }
+    def highest_card
+      if @high_cards
+        @high_cards.max
+      else
+        hole.max
+      end
+    end
+
+    def highest_kicker
+      if @high_cards
+        (@cards - @high_cards).max
+      else
+        hole.max
+      end
     end
 
     def <=>(other)
       if self.rank_index == other.rank_index
-        if self.high_card == other.high_card
-          self.kickers_sum <=> other.kickers_sum
+        if self.highest_card == other.highest_card
+          self.highest_kicker <=> other.highest_kicker
         else
-          self.high_card <=> other.high_card
+          self.highest_card <=> other.highest_card
         end
       else
         self.rank_index <=> other.rank_index

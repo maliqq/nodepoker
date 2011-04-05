@@ -23,8 +23,12 @@ module PokerNode
       "<Card:#{self}>"
     end
 
+    def ==(other)
+      other.is_a?(Card) && self.kind == other.kind && self.suit == other.suit
+    end
+
     def <=>(other)
-      (KIND.index(self.kind) || -1) <=> (KIND.index(other.kind) || -1)
+      KIND.index(self.kind) <=> KIND.index(other.kind)
     end
   end
 end

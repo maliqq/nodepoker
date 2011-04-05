@@ -19,10 +19,10 @@ module PokerNode
     attr_reader :hands_size
 
     def initialize(hands_size)
-      @hands_size = hands_size
       @flop = []
       @hands = []
       @hand_cards = []
+      @hands_size = hands_size
     end
 
     def shuffle
