@@ -1,14 +1,24 @@
 require 'spec_helper'
+require 'set'
 
-describe PokerNode::Card do
+describe Card do
+  example 'all cards' do
+    Card.all.should == Card::CARD
+    Card.all.size.should == 52
+  end
+
   example 'deck' do
-    PokerNode::CARDS.each { |card|
+    Card.all.each { |card|
       card.to_s.should == "#{card.kind}#{card.suit}"
     }
   end
 
   example 'comparing' do
-    PokerNode::CARDS.max.kind.should == 'A'
-    PokerNode::CARDS.min.kind.should == '2'
+    Card.all.max.kind.should == 'A'
+    Card.all.min.kind.should == '2'
+  end
+
+  example 'shuffle' do
+    Set.new(Card.shuffle).should == Set.new(Card.all)
   end
 end
