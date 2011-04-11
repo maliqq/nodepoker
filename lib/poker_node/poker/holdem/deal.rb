@@ -1,4 +1,4 @@
-module PokerNode
+module PokerNode::Holdem
   class Deal
     attr_reader :flop
 
@@ -25,14 +25,14 @@ module PokerNode
       @hole_cards = []
       @holes = []
       @limit = limit
+      @deck = Deck.new
     end
 
     def shuffle
-      deck = CARDS.shuffle
-      3.times { @flop << deck.shift }
-      @turn_card = deck.shift
-      @river_card = deck.shift
-      @limit.times { @hole_cards << [deck.shift, deck.shift] }
+      @flop.fill(0, 3) { @deck.burn! }
+      @turn_card = @deck.burn!
+      @river_card = @deck.burn!
+      @limit.times { @hole_cards << deal_hole }
       @holes = @hole_cards.collect { |hole| Hole.new(river, hole) }
       @hands = @holes.map(&:hand)
     end
@@ -48,5 +48,11 @@ module PokerNode
     def inspect
       "<Table flop=#{flop} turn_card=#{turn_card} river_card=#{river_card}>"
     end
+
+    private
+
+      def deal_hole
+        [].fill(0, Hole.size) { @deck.burn! }
+      end
   end
 end

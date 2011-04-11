@@ -1,15 +1,6 @@
 module PokerNode
   module Holdem
-    HAND = [
-      :high_card,
-      :one_pair,
-      :two_pair,
-      :three_of_kind,
-      :straight,
-      :flush,
-      :full_house,
-      :four_of_kind,
-      :straight_flush
-    ].freeze
+    autoload :Deal, 'poker_node/poker/holdem/deal'
+    autoload :Hole, 'poker_node/poker/holdem/hole'
   end
 end
