@@ -10,6 +10,7 @@ describe Deck do
 
     @deck.burn!.should be_kind_of(Card)
     @deck.burn_random!.should be_kind_of(Card)
+    @deck.burn_random_kind!.should be_kind_of(Card)
 
   end
 

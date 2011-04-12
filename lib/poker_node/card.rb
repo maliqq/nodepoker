@@ -17,6 +17,8 @@ module PokerNode
     end
 
     def initialize(kind, suit)
+      raise ArgumentError.new('unknown kind') unless Kind.all.include?(kind)
+      raise ArgumentError.new('unknown suit') unless Suit.all.include?(suit)
       @kind = kind
       @suit = suit
     end
@@ -25,16 +27,18 @@ module PokerNode
       Kind.all.collect { |kind| Card.new(kind, suit) }
     }.flatten.freeze
 
-    def self.all
-      CARD
-    end
+    class << self
+      def all
+        CARD
+      end
 
-    def self.size
-      CARD.size
-    end
+      def size
+        CARD.size
+      end
 
-    def self.shuffle
-      all.shuffle
+      def shuffle
+        all.shuffle
+      end
     end
 
     def to_s

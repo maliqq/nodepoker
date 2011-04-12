@@ -1,14 +1,12 @@
 module PokerNode::Holdem
   class Deal
     attr_reader :flop
-
     attr_reader :turn_card
+    attr_reader :river_card
 
     def turn
       flop + [turn_card]
     end
-
-    attr_reader :river_card
 
     def river
       turn + [river_card]
@@ -28,7 +26,7 @@ module PokerNode::Holdem
       @deck = Deck.new
     end
 
-    def shuffle
+    def shuffle!
       @flop.fill(0, 3) { @deck.burn! }
       @turn_card = @deck.burn!
       @river_card = @deck.burn!
@@ -46,7 +44,7 @@ module PokerNode::Holdem
     end
 
     def inspect
-      "<Table flop=#{flop} turn_card=#{turn_card} river_card=#{river_card}>"
+      "<Deal\n\tflop=#{flop}\n\tturn_card=#{turn_card}\n\triver_card=#{river_card}>"
     end
 
     private

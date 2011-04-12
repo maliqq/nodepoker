@@ -1,6 +1,6 @@
 module PokerNode
   module Poker
-    HIGH_HAND = [
+    HIGH = [
       :high_card,
       :one_pair,
       :two_pair,
@@ -12,6 +12,6 @@ module PokerNode
       :straight_flush
     ].freeze
 
-    LOW_HAND = [] # for razz
+    LOW = [] # for razz
   end
 end

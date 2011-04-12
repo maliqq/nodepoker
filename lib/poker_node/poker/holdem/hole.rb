@@ -6,19 +6,28 @@ module PokerNode::Holdem
       SIZE
     end
 
-    def initialize(river, hole)
+    attr_reader :river
+    attr_reader :cards
+    
+    attr_reader :hand
+
+    def initialize(river, cards)
       @river = river
-      @hole = hole
+      @cards = cards
     end
 
     def hand
-      Hand.new(@river + @hole)
+      @hand ||= Hand.new(@river + @cards)
     end
 
-    private
+    def rank
+      @rank ||= "PokerNode::#{hand_rank.to_s.classify}".constantize.new(@hand, self)
+    end
 
-      def combine(&block)
-        (@river + @hole).combination(5).collect(&block)
-      end
+    def hand_rank
+      Poker::HIGH.reverse.each { |high|
+        return high if @hand.query?(high)
+      }
+    end
   end
 end

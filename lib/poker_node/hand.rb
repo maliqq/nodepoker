@@ -1,43 +1,55 @@
+require 'set'
+
 module PokerNode
   class Hand
     attr_reader :cards
+
+    attr_reader :suit
+    attr_reader :kind
     attr_reader :flush_suit
-    attr_reader :straight_to
+    attr_reader :straight_kind
     
     def initialize(cards)
       @cards = cards.is_a?(String) ? Card.parse!(cards) : cards
-      @kinds = cards.map(&:kind)
-      @kinds_hash = cards.group_by(&:kind)
-      @suits = cards.map(&:suit)
-      @suits_hash = cards.group_by(&:suit)
-      @flush_suit = @suits.select { |suit| @suits_hash[suit].size >= 5 }.first
-      Kind.straights.each { |kinds|
-        if kinds.all? { |kind| @kinds.include?(kind) }
-          @straight_to = kinds.last
-        end
-      }
-    end
-
-    def suit
-      @suits_hash
     end
 
     def kind
-      @kinds_hash
+      @kind ||= @cards.group_by(&:kind)
+    end
+
+    def kinds
+      @kinds ||= @cards.map(&:kind)
+    end
+
+    def kinds_set
+      Set.new(kinds)
+    end
+
+    def straight_kind
+      Kind.straights.each { |kinds|
+        @straight_kind = kinds.last if kinds_set.subset?(Set.new(kinds))
+      }
+      @straight_kind
+    end
+
+    def suit
+      @suit ||= @cards.group_by(&:suit)
+    end
+    
+    def suits
+      @suits ||= @cards.map(&:suit)
+    end
+
+    def flush_suit
+      @flush_suit ||= suits.select { |suit| self.suit[suit].size >= 5 }.first
     end
 
     def cards_by_count(n)
-      @kinds_hash.values.select do |cards|
-        cards.size == n
-      end
+      kind.values.select { |cards| cards.size == n }
     end
 
     def high_card?
       true
-    end
-
-    def wheel_straight?
-      straight? && @straight_to == '5'
     end
 
     def straight_flush?
@@ -45,15 +57,19 @@ module PokerNode
     end
 
     def royal_flush?
-      straight_flush? && @straight_to == 'A'
+      straight_flush? && straight_kind == 'A'
     end
 
     def flush?
-      @flush_suit.present?
+      flush_suit.present?
     end
 
     def straight?
-      @straight_to.present?
+      straight_kind.present?
+    end
+    
+    def wheel_straight?
+      straight? && straight_kind == '5'
     end
 
     def quads
@@ -105,6 +121,10 @@ module PokerNode
     def one_pair? # at least 1 pair
       !pairs.empty?
     end
+
+    def query?(hand)
+      send("#{hand}?")
+    end
     
     alias :pair? one_pair?
   end
@@ -114,8 +134,33 @@ module PokerNode
     attr_reader :high_cards
     attr_reader :kickers
 
-    def initialize(hand)
+    def initialize(hand, hole)
       @hand = hand
+      @hole = hole
+    end
+
+    def hole_cards
+      @hole.cards
+    end
+
+    def high_cards
+      @hole.cards
+    end
+
+    def kickers
+      @hand.cards - high_cards
+    end
+
+    def name
+      self.class.to_s.demodulize.underscore
+    end
+
+    def explain
+      "High card #{@hole.cards.max}"
+    end
+
+    def inspect
+      "<Rank:#{explain}\n\thole_cards=#{hole_cards}\n\thigh_cards=#{high_cards}\n\tkickers=#{kickers}>"
     end
   end
 
@@ -123,20 +168,35 @@ module PokerNode
     def high_cards
       @hand.suit[@hand.flush_suit]
     end
+
+    def explain
+      "Flush of #{@hand.flush_suit}"
+    end
   end
 
   class Straight < HighCard
     def high_cards
-      @hand.kind[@hand.straight_to]
+      @hand.kind[@hand.straight_kind]
+    end
+
+    def explain
+      "Straight to #{@hand.straight_kind}"
     end
   end
 
   class StraightFlush < Straight
+    def explain
+      "Straight flush of #{@hand.flush_suit} to #{@hand.straight_kind}"
+    end
   end
 
   class FourOfKind < HighCard
     def high_cards
       @hand.quad
+    end
+
+    def explain
+      "Four of #{@hand.quad.max.kind}'s"
     end
   end
 
@@ -144,20 +204,35 @@ module PokerNode
     def high_cards
       @hand.set
     end
+
+    def explain
+      "Three of #{high_cards.max.kind}'s"
+    end
   end
 
   class FullHouse < ThreeOfKind
+    def explain
+      "#{@hand.set.max.kind}'s full of #{@hand.pair.max.kind}'s"
+    end
   end
 
   class OnePair < HighCard
     def high_cards
       @hand.pair
     end
+
+    def explain
+      "Pair of #{@hand.pair.max.kind}'s"
+    end
   end
 
   class TwoPair < OnePair
     def high_cards
       @hand.pair
+    end
+
+    def explain
+      "Pairs of #{@hand.pairs_sorted.first.max.kind}'s and #{@hand.pairs_sorted.second.max.kind}'s"
     end
   end
 end
