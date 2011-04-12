@@ -1,6 +1,7 @@
 module PokerNode
   class Kind
     KIND = %w(2 3 4 5 6 7 8 9 10 J Q K A).freeze
+    NAME = %w(two three four five six seven eight nine ten jack queen king ace).freeze
 
     class << self
       def all
@@ -9,6 +10,10 @@ module PokerNode
 
       def size
         KIND.size
+      end
+
+      def name(kind)
+        NAME[index(kind)]
       end
 
       def index(kind)
