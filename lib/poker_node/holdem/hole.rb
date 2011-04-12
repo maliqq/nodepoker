@@ -17,7 +17,7 @@ module PokerNode::Holdem
     end
 
     def hand
-      @hand ||= Hand.new(@river + @cards)
+      @hand ||= PokerNode::Hand.new(@river + @cards)
     end
 
     def rank
@@ -25,7 +25,7 @@ module PokerNode::Holdem
     end
 
     def hand_rank
-      Poker::HIGH.reverse.each { |high|
+      PokerNode::Poker::HIGH.reverse.each { |high|
         return high if @hand.query?(high)
       }
     end

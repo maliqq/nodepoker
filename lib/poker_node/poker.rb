@@ -13,5 +13,10 @@ module PokerNode
     ].freeze
 
     LOW = [] # for razz
+
+    module Holdem
+      autoload :Deal, 'poker_node/holdem/deal'
+      autoload :Hole, 'poker_node/holdem/hole'
+    end
   end
 end
