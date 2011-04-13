@@ -1,4 +1,14 @@
 module PokerNode
+  module Holdem
+    autoload :Deal, 'poker_node/holdem/deal'
+    autoload :Hole, 'poker_node/holdem/hole'
+  end
+
+  module Omaha
+    autoload :Deal, 'poker_node/omaha/deal'
+    autoload :Hole, 'poker_node/omaha/hole'
+  end
+
   module Poker
     HIGH = [
       :high_card,
@@ -13,10 +23,5 @@ module PokerNode
     ].freeze
 
     LOW = [] # for razz
-
-    module Holdem
-      autoload :Deal, 'poker_node/holdem/deal'
-      autoload :Hole, 'poker_node/holdem/hole'
-    end
   end
 end

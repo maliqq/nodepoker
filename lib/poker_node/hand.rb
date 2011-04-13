@@ -27,7 +27,7 @@ module PokerNode
 
     def straight_kind
       Kind.straights.each { |kinds|
-        @straight_kind = kinds.last if kinds_set.subset?(Set.new(kinds))
+        @straight_kind = kinds.last if Set.new(kinds).subset?(kinds_set)
       }
       @straight_kind
     end
@@ -130,6 +130,8 @@ module PokerNode
   end
   
   class HighCard
+    include Comparable
+    
     attr_reader :hand
     attr_reader :high_cards
     attr_reader :kickers
@@ -161,6 +163,24 @@ module PokerNode
 
     def inspect
       "<Rank:#{explain}\n\thole_cards=#{hole_cards}\n\thigh_cards=#{high_cards}\n\tkickers=#{kickers}>"
+    end
+
+    def index
+      PokerNode::Poker::HIGH.index(name.to_sym)
+    end
+
+    def <=>(other)
+      index_compare = self.index <=> other.index
+      return index_compare unless index_compare == 0
+      self.high_cards.each_with_index { |card, i|
+        high_card_compare = card <=> other.high_cards[i]
+        return high_card_compare unless high_card_compare == 0
+      }
+      self.kickers.each_with_index { |card, i|
+        kicker_compare = card <=> other.kickers[i]
+        return kicker_compare unless kicker_compare == 0
+      }
+      return 0
     end
   end
 

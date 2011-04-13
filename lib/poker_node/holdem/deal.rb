@@ -23,7 +23,7 @@ module PokerNode::Holdem
       @hole_cards = []
       @holes = []
       @limit = limit
-      @deck = Deck.new
+      @deck = PokerNode::Deck.new
     end
 
     def shuffle!
@@ -31,7 +31,7 @@ module PokerNode::Holdem
       @turn_card = @deck.burn!
       @river_card = @deck.burn!
       @limit.times { @hole_cards << deal_hole }
-      @holes = @hole_cards.collect { |hole| Hole.new(river, hole) }
+      @holes = @hole_cards.collect { |hole| build_hole(hole) }
       @hands = @holes.map(&:hand)
     end
 
@@ -47,10 +47,12 @@ module PokerNode::Holdem
       "<Deal\n\tflop=#{flop}\n\tturn_card=#{turn_card}\n\triver_card=#{river_card}>"
     end
 
-    private
+    def deal_hole
+      [].fill(0, 2) { @deck.burn! }
+    end
 
-      def deal_hole
-        [].fill(0, Hole.size) { @deck.burn! }
-      end
+    def build_hole(hole)
+      PokerNode::Holdem::Hole.new(river, hole)
+    end
   end
 end

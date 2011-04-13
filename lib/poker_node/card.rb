@@ -4,7 +4,7 @@ module PokerNode
 
     attr_reader :kind, :suit
 
-    REGEX = /(\d+|[A|K|Q|J]{1})([♠♥♦♣]{1})/
+    REGEX = /(\d+|[A|K|Q|J]{1})([♠♥♦♣scdh]{1})/
 
     class << self
       def from_string(s)
@@ -17,6 +17,7 @@ module PokerNode
     end
 
     def initialize(kind, suit)
+      suit = Suit.wrap(suit)
       raise ArgumentError.new('unknown kind') unless Kind.all.include?(kind)
       raise ArgumentError.new('unknown suit') unless Suit.all.include?(suit)
       @kind = kind
@@ -54,6 +55,7 @@ module PokerNode
     end
 
     def <=>(other)
+      return 1 if other.nil?
       Kind.index(self.kind) <=> Kind.index(other.kind)
     end
   end

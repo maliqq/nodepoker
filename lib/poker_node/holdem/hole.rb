@@ -26,7 +26,7 @@ module PokerNode::Holdem
 
     def hand_rank
       PokerNode::Poker::HIGH.reverse.each { |high|
-        return high if @hand.query?(high)
+        return high if hand.query?(high)
       }
     end
   end

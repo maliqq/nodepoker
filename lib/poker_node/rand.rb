@@ -9,7 +9,7 @@ module PokerNode
           s.squeeze.split(//).each do |letter|
             if letter == '*'
               card = deck.burn_random_kind!
-            elsif letter =~ /[a-z]/i
+            elsif letter =~ /[A-Z]/
               used[letter] ||= deck.burn_random_kind!
               card = used[letter]
             else
