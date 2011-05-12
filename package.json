@@ -1,0 +1,17 @@
+{
+  "name": "pokernode",
+  "version": "0.0.1",
+  "repository": {},
+  "directories": {
+    "lib": "",
+    "test": "",
+  },
+  "engines": {
+    "node": "*"
+  },
+  "dependencies": {
+    "underscore": "*",
+    "vows" : "*"
+  }
+}
+
