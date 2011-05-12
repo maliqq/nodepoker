@@ -1,3 +1,19 @@
 == Poker Node
 
-Utilities and combinatorics for poker
+NodeJS & CoffeeScript implementation of Poker
+
+Limits
+ * No Limit
+ * Pot Limit
+ * Fixed Limit
+
+Games
+ * Community card Poker
+  - Texas Holdem
+  - Omaha Holdem Hi
+  - Omaha Holdem Hi/Lo (8-or-better)
+ * 7 card Stud 
+  - Stud Hi
+  - Stud Hi/Lo
+  - Razz
+
