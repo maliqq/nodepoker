@@ -1,1 +1,0 @@
-class Omaha extends Holdem

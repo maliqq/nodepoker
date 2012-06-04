@@ -17,4 +17,3 @@ Suit.entityOf = (suit) ->
   Suit.entities[Suit.indexOf(suit)]
 
 exports.Suit = Suit
-

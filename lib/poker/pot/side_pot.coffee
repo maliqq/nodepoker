@@ -5,4 +5,3 @@ class SidePot
     @members.push player.id
 
 exports.SidePot = SidePot
-

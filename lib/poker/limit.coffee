@@ -1,3 +1,0 @@
-class Limit
-  constructor: ->
-

@@ -1,3 +1,3 @@
 class Deal
-    constructor: (@size) ->
-        @deck = new Deck()
+  constructor: (@size) ->
+    @deck = new Deck()
